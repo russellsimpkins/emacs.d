@@ -1,6 +1,6 @@
 (require 'package)
 (add-to-list 'package-archives
-         '("melpa" . "http://melpa.milkbox.net/packages/") t)
+     '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 (setq gc-cons-threshold 100000000)
 (setq inhibit-startup-message t)
@@ -9,33 +9,33 @@
 
 (defconst demo-packages
   '(anzu
-    company
-    duplicate-thing
-    ggtags
-    helm
-    helm-gtags
-    helm-projectile
-    helm-swoop
-    ;; function-args
-    clean-aindent-mode
-    comment-dwim-2
-    dtrt-indent
-    ws-butler
-    iedit
-    yasnippet
-    smartparens
-    projectile
-    volatile-highlights
-    zygospore))
+  company
+  duplicate-thing
+  ggtags
+  helm
+  helm-gtags
+  helm-projectile
+  helm-swoop
+  ;; function-args
+  clean-aindent-mode
+  comment-dwim-2
+  dtrt-indent
+  ws-butler
+  iedit
+  yasnippet
+  smartparens
+  projectile
+  volatile-highlights
+  zygospore))
 
 (defun install-packages ()
   "Install all required packages."
   (interactive)
   (unless package-archive-contents
-    (package-refresh-contents))
+  (package-refresh-contents))
   (dolist (package demo-packages)
-    (unless (package-installed-p package)
-      (package-install package))))
+  (unless (package-installed-p package)
+    (package-install package))))
 
 (install-packages)
 
@@ -50,7 +50,7 @@
 ;; (require 'setup-ggtags)
 (require 'setup-cedet)
 (require 'setup-editing)
-
+(require 'js-beautify)
 (windmove-default-keybindings)
 
 ;; function-args
@@ -63,8 +63,8 @@
 (require 'company)
 (add-hook 'after-init-hook 'global-company-mode)
 (delete 'company-semantic company-backends)
-(define-key c-mode-map  [(tab)] 'company-complete)
-(define-key c++-mode-map  [(tab)] 'company-complete)
+;; (define-key c-mode-map  [(tab)] 'company-complete)
+;; (define-key c++-mode-map  [(tab)] 'company-complete)
 ;; (define-key c-mode-map  [(control tab)] 'company-complete)
 ;; (define-key c++-mode-map  [(control tab)] 'company-complete)
 
@@ -102,12 +102,13 @@
 
 ;; set appearance of a tab that is represented by 4 spaces
 (setq-default tab-width 4)
+(setq-default tab-stop-list (quote(2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72)))
 
 ;; Compilation
 (global-set-key (kbd "<f5>") (lambda ()
-                               (interactive)
-                               (setq-local compilation-read-command nil)
-                               (call-interactively 'compile)))
+                 (interactive)
+                 (setq-local compilation-read-command nil)
+                 (call-interactively 'compile)))
 
 ;; setup GDB
 (setq
@@ -236,15 +237,18 @@
   "Find next matching tag, for GTAGS."
   (interactive)
   (let ((latest-gtags-buffer
-         (car (delq nil  (mapcar (lambda (x) (and (string-match "GTAGS SELECT" (buffer-name x)) (buffer-name x)) )
-                                 (buffer-list)) ))))
-    (cond (latest-gtags-buffer
-           (switch-to-buffer latest-gtags-buffer)
-           (forward-line)
-           (gtags-select-it nil))
-          ) ))
+     (car (delq nil  (mapcar (lambda (x) (and (string-match "GTAGS SELECT" (buffer-name x)) (buffer-name x)) )
+                 (buffer-list)) ))))
+  (cond (latest-gtags-buffer
+       (switch-to-buffer latest-gtags-buffer)
+       (forward-line)
+       (gtags-select-it nil))
+      ) ))
 ;; M-; cycles to next result, after doing M-. C-M-. or C-M-,
 (global-set-key "\M-'" 'ww-next-gtag)
+
+;; turn on linum-mode for all
+(global-linum-mode t)
 
 (ac-config-default)
 (defun go-mode-setup ()
@@ -276,46 +280,46 @@
   (tool-bar-mode 0)
 
   (defun sacha/increase-font-size ()
-    (interactive)
-    (set-face-attribute 'default
-                        nil
-                        :height
-                        (ceiling (* 1.10
-                                    (face-attribute 'default :height)))))
+  (interactive)
+  (set-face-attribute 'default
+            nil
+            :height
+            (ceiling (* 1.10
+                  (face-attribute 'default :height)))))
   (defun sacha/decrease-font-size ()
-    (interactive)
-    (set-face-attribute 'default
-                        nil
-                        :height
-                        (floor (* 0.9
-                                  (face-attribute 'default :height)))))
+  (interactive)
+  (set-face-attribute 'default
+            nil
+            :height
+            (floor (* 0.9
+                  (face-attribute 'default :height)))))
   ;; Original by Hirose Yuuji and Bob Wiener
   (defun my:resize-window (&optional arg)
-    "*Resize window interactively."
-    (interactive "p")
-    (if (one-window-p) (error "Cannot resize sole window"))
-    (or arg (setq arg 1))
-    (let (c)
-      (catch 'done
-        (while t
-          (message
-           "w=heighten, s=shrink, d=widen, a=narrow (by %d);  1-9=unit, q=quit"
-           arg)
-          (setq c (read-char))
-          (condition-case ()
-              (cond
-               ((= c ?w) (enlarge-window arg))
-               ((= c ?s) (shrink-window arg))
-               ((= c ?d) (enlarge-window-horizontally arg))
-               ((= c ?a) (shrink-window-horizontally arg))
-               ((= c ?o) (other-window 1))
-               ((= c ?p) (other-window -1))
-               ((= c ?\^G) (keyboard-quit))
-               ((= c ?q) (throw 'done t))
-               ((and (> c ?0) (<= c ?9)) (setq arg (- c ?0)))
-               (t (beep)))
-            (error (beep)))))
-      (message "Done.")))
+  "*Resize window interactively."
+  (interactive "p")
+  (if (one-window-p) (error "Cannot resize sole window"))
+  (or arg (setq arg 1))
+  (let (c)
+    (catch 'done
+    (while t
+      (message
+       "w=heighten, s=shrink, d=widen, a=narrow (by %d);  1-9=unit, q=quit"
+       arg)
+      (setq c (read-char))
+      (condition-case ()
+        (cond
+         ((= c ?w) (enlarge-window arg))
+         ((= c ?s) (shrink-window arg))
+         ((= c ?d) (enlarge-window-horizontally arg))
+         ((= c ?a) (shrink-window-horizontally arg))
+         ((= c ?o) (other-window 1))
+         ((= c ?p) (other-window -1))
+         ((= c ?\^G) (keyboard-quit))
+         ((= c ?q) (throw 'done t))
+         ((and (> c ?0) (<= c ?9)) (setq arg (- c ?0)))
+         (t (beep)))
+      (error (beep)))))
+    (message "Done.")))
 
   ;; KEYBOARD COMMANDS
   (global-set-key (kbd "C-+") 'sacha/increase-font-size)
@@ -326,8 +330,8 @@
   (color-theme-midnight)
   ;; setting the default font size
   (set-face-attribute 'default
-                      nil
-                      :height 180)
+            nil
+            :height 180)
   (maximize-frame)
   (redraw-frame)
   (redraw-display)
