@@ -44,13 +44,15 @@
 (setq helm-gtags-prefix-key "\C-cg")
 
 (add-to-list 'load-path "~/.emacs.d/custom")
+(add-to-list 'load-path "~/.emacs.d/emacs-google-config")
 
+;;(require 'google)
 (require 'setup-helm)
 (require 'setup-helm-gtags)
 ;; (require 'setup-ggtags)
 (require 'setup-cedet)
 (require 'setup-editing)
-(require 'js-beautify)
+;; (require 'js-beautify)
 (windmove-default-keybindings)
 
 ;; function-args
@@ -102,7 +104,9 @@
 
 ;; set appearance of a tab that is represented by 4 spaces
 (setq-default tab-width 4)
-(setq-default tab-stop-list (quote(2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72)))
+(setq-default tab-stop-list (quote(4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72)))
+
+;;(setq-default tab-stop-list (quote(2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50 52 54 56 58 60 62 64 66 68 70 72)))
 
 ;; Compilation
 (global-set-key (kbd "<f5>") (lambda ()
@@ -142,6 +146,7 @@
 (setq sp-hybrid-kill-entire-symbol nil)
 (sp-use-paredit-bindings)
 
+;; RSS - finding cpu hog?
 (show-smartparens-global-mode +1)
 (smartparens-global-mode 1)
 
@@ -165,8 +170,7 @@
 (setq custom-file (concat dotfiles-dir "custom.el"))
 (load custom-file 'noerror)
 (ac-config-default)
-
-;; (standard-display-ascii ?\t "^I") ;; show tabs as ^I
+;;(standard-display-ascii ?\t "^I") ;; show tabs as ^I
 ;; let emacs find <> as well balanced parens as [] and () are
 (modify-syntax-entry ?> "(<")
 (modify-syntax-entry ?< ")>")
@@ -174,6 +178,8 @@
 (setq-default c-basic-offset 4)
 (setq-default js-indent-level 2)
 (setq-default fill-column 9999)
+;; make the align function use spaces
+(setq align-to-tab-stop nil)
 ;; (setq-default fill-column 72)
 
 
@@ -185,7 +191,7 @@
 (global-set-key (kbd "C-x C-m") 'execute-extended-command)
 (global-set-key (kbd "C-x u") 'cua-mode)
 ;; for split frames
-(global-set-key (kbd "C-x 6")  'enlarge-window)
+(global-set-key (kbd "C-x 6") 'enlarge-window)
 (global-set-key (kbd "C-x 5") 'shrink-window)
 (global-set-key (kbd "C-x }") 'enlarge-window-horizontally)
 (global-set-key (kbd "C-x {") 'shrink-window-horizontally)
@@ -198,6 +204,7 @@
 (global-set-key (kbd "C-x C-r") 'revert-buffer)
 (global-set-key (kbd "C-x C-l") 'describe-char)
 (global-set-key (kbd "M-c") 'capitalize-word)
+(global-set-key (kbd "C-x l") 'downcase-word)
 
 (global-set-key (kbd "C-x j b") 'js-beautify-region)
 
@@ -231,7 +238,11 @@
 (add-hook 'php-mode-hook 'flycheck-mode)
 
 (define-key ac-mode-map (kbd "M-TAB") 'auto-complete)
-
+;; Python Hook
+(add-hook 'python-mode-hook
+          (function (lambda ()
+                      (setq indent-tabs-mode nil
+                            tab-width 2))))
 
 (defun ww-next-gtag ()
   "Find next matching tag, for GTAGS."
@@ -255,6 +266,32 @@
   (go-eldoc-setup))
 (add-hook 'go-mode-hook 'go-mode-setup)
 
+
+(defun ggshell (&optional buffer)
+  (interactive)
+  (let* (
+         (tramp-path (when (tramp-tramp-file-p default-directory)
+                       (tramp-dissect-file-name default-directory)))
+         (host (tramp-file-name-real-host tramp-path))
+         (user (if (tramp-file-name-user tramp-path)
+                   (format "%s@" (tramp-file-name-user tramp-path)) ""))
+         (new-buffer-nameA (format "*shell:%s*" host))
+         (new-buffer-nameB (generate-new-buffer-name new-buffer-nameA))
+         (currentbuf (get-buffer-window (current-buffer)))
+         )
+    (generate-new-buffer new-buffer-nameB)
+    (set-window-dedicated-p currentbuf nil)
+    (set-window-buffer currentbuf new-buffer-nameB)
+    (shell new-buffer-nameB)
+    )
+  )
+
+(defun create-shell ()
+  "creates a shell with a given name"
+  (interactive);; "Prompt\n shell name:")
+  (let ((shell-name (read-string "shell name: " nil)))
+    (shell (concat "*" shell-name "*")))
+  )
 
 (defun terminal-init-screen ()
   "Terminal initialization function for screen."
