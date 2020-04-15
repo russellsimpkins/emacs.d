@@ -147,18 +147,20 @@
 (sp-use-paredit-bindings)
 
 ;; RSS - finding cpu hog?
-(show-smartparens-global-mode +1)
-(smartparens-global-mode 1)
+;;(show-smartparens-global-mode +1)
+;;(smartparens-global-mode 1)
 
 ;; Package: projejctile
-(require 'projectile)
-(projectile-global-mode)
-(setq projectile-enable-caching t)
+;; RSS - commented out next 3 on 8/13/18 to find cpu hog
+;;(require 'projectile)
+;;(projectile-global-mode)
+;;(setq projectile-enable-caching t)
 
-(require 'helm-projectile)
-(helm-projectile-on)
-(setq projectile-completion-system 'helm)
-(setq projectile-indexing-method 'alien)
+;; RSS - commented out next 4 on 8/13/18 to find cpu hog
+;;(require 'helm-projectile)
+;;(helm-projectile-on)
+;;(setq projectile-completion-system 'helm)
+;;(setq projectile-indexing-method 'alien)
 
 ;; Package zygospore
 (global-set-key (kbd "C-x 1") 'zygospore-toggle-delete-other-windows)
@@ -205,8 +207,9 @@
 (global-set-key (kbd "C-x C-l") 'describe-char)
 (global-set-key (kbd "M-c") 'capitalize-word)
 (global-set-key (kbd "C-x l") 'downcase-word)
-
 (global-set-key (kbd "C-x j b") 'js-beautify-region)
+(global-set-key (kbd "C-M-f") 'forward-sexp)
+(global-set-key (kbd "C-M-b") 'backward-sexp)
 
 ;; git push
 (global-set-key (kbd "C-x p") 'magit-push)
@@ -267,32 +270,6 @@
 (add-hook 'go-mode-hook 'go-mode-setup)
 
 
-(defun ggshell (&optional buffer)
-  (interactive)
-  (let* (
-         (tramp-path (when (tramp-tramp-file-p default-directory)
-                       (tramp-dissect-file-name default-directory)))
-         (host (tramp-file-name-real-host tramp-path))
-         (user (if (tramp-file-name-user tramp-path)
-                   (format "%s@" (tramp-file-name-user tramp-path)) ""))
-         (new-buffer-nameA (format "*shell:%s*" host))
-         (new-buffer-nameB (generate-new-buffer-name new-buffer-nameA))
-         (currentbuf (get-buffer-window (current-buffer)))
-         )
-    (generate-new-buffer new-buffer-nameB)
-    (set-window-dedicated-p currentbuf nil)
-    (set-window-buffer currentbuf new-buffer-nameB)
-    (shell new-buffer-nameB)
-    )
-  )
-
-(defun create-shell ()
-  "creates a shell with a given name"
-  (interactive);; "Prompt\n shell name:")
-  (let ((shell-name (read-string "shell name: " nil)))
-    (shell (concat "*" shell-name "*")))
-  )
-
 (defun terminal-init-screen ()
   "Terminal initialization function for screen."
   ;; Use the xterm color initialization code.
@@ -307,10 +284,7 @@
   (if (fboundp 'menu-bar-mode) (menu-bar-mode -1))
   (if (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (if (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  (terminal-init-screen)
-
-
-  )
+  (terminal-init-screen))
 
 (defun window-settings()
   (require 'ansi-color)
