@@ -16,7 +16,7 @@
 (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
 
 (when (executable-find "curl")
-  (setq helm-google-suggest-use-curl-p t))
+  (setq helm-net-prefer-curl t))
 
 (setq
  helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>

@@ -1,7 +1,12 @@
-(require 'package)
+(require 'use-package)
+; RSS moved over to 'use-package
+; (use-package 'package)
+;(add-to-list 'package-archives
+;             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
-     '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize)
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+; RSS 12/26 removed because emacs said it's not necessary
+;(package-initialize)
 (setq gc-cons-threshold 100000000)
 (setq inhibit-startup-message t)
 
@@ -37,7 +42,8 @@
   (unless (package-installed-p package)
     (package-install package))))
 
-(install-packages)
+;; rss commenting this out so that we don't contact the package manager on startup
+;; (install-packages)
 
 ;; this variables must be set before load helm-gtags
 ;; you can change to any prefix key of your choice
@@ -47,11 +53,11 @@
 (add-to-list 'load-path "~/.emacs.d/emacs-google-config")
 
 ;;(require 'google)
-(require 'setup-helm)
-(require 'setup-helm-gtags)
+(use-package setup-helm)
+(use-package setup-helm-gtags)
 ;; (require 'setup-ggtags)
-(require 'setup-cedet)
-(require 'setup-editing)
+(use-package setup-cedet)
+(use-package setup-editing)
 ;; (require 'js-beautify)
 (windmove-default-keybindings)
 
@@ -62,7 +68,7 @@
 ;; (define-key c++-mode-map  [(tab)] 'company-complete)
 
 ;; company
-(require 'company)
+(use-package company)
 (add-hook 'after-init-hook 'global-company-mode)
 (delete 'company-semantic company-backends)
 ;; (define-key c-mode-map  [(tab)] 'company-complete)
@@ -124,23 +130,23 @@
  )
 
 ;; Package: clean-aindent-mode
-(require 'clean-aindent-mode)
+(use-package clean-aindent-mode)
 (add-hook 'prog-mode-hook 'clean-aindent-mode)
 
 ;; Package: dtrt-indent
-(require 'dtrt-indent)
+(use-package dtrt-indent)
 (dtrt-indent-mode 1)
 
 ;; Package: ws-butler
-(require 'ws-butler)
+(use-package ws-butler)
 (add-hook 'prog-mode-hook 'ws-butler-mode)
 
 ;; Package: yasnippet
-(require 'yasnippet)
+(use-package yasnippet)
 (yas-global-mode 1)
 
 ;; Package: smartparens
-(require 'smartparens-config)
+(use-package smartparens-config)
 (setq sp-base-key-bindings 'paredit)
 (setq sp-autoskip-closing-pair 'always)
 (setq sp-hybrid-kill-entire-symbol nil)
@@ -223,15 +229,18 @@
 ;; show the column number in the bottom tray
 (column-number-mode 1)
 
+;; LS not so good on a mac. Install gnu ls or have this
+(when (string= system-type "darwin")
+  (setq dired-use-ls-dired nil))
 ;; golang specifics
 ;; (setq gofmt-command "~/projects/go-projects/bin/goimports")
 (when (memq window-system '(mac ns))
   (exec-path-from-shell-initialize)
   (exec-path-from-shell-copy-env "GOPATH"))
-(require 'go-autocomplete)
-(require 'auto-complete-config)
+(use-package go-autocomplete)
+(use-package auto-complete-config)
 
-
+(use-package go-dlv)
 ;; run gofmt on go source
 (add-hook 'before-save-hook 'gofmt-before-save)
 
@@ -287,7 +296,7 @@
   (terminal-init-screen))
 
 (defun window-settings()
-  (require 'ansi-color)
+  (use-package ansi-color)
   (tool-bar-mode 0)
 
   (defun sacha/increase-font-size ()
