@@ -14,6 +14,7 @@
 (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
 (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
 
+
 ;; RSS(when (executable-find "curl")
 ;; RSS  (setq helm-google-suggest-use-curl-p t))
 
