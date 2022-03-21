@@ -1,7 +1,9 @@
 (require 'package)
+;(add-to-list 'package-archives
+;             '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (add-to-list 'package-archives
-     '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize)
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+;(package-initialize)
 (setq gc-cons-threshold 100000000)
 (setq inhibit-startup-message t)
 
@@ -223,6 +225,9 @@
 ;; show the column number in the bottom tray
 (column-number-mode 1)
 
+;; LS not so good on a mac. Install gnu ls or have this
+(when (string= system-type "darwin")
+  (setq dired-use-ls-dired nil))
 ;; golang specifics
 ;; (setq gofmt-command "~/projects/go-projects/bin/goimports")
 (when (memq window-system '(mac ns))
@@ -231,7 +236,7 @@
 (require 'go-autocomplete)
 (require 'auto-complete-config)
 
-
+(require 'go-dlv)
 ;; run gofmt on go source
 (add-hook 'before-save-hook 'gofmt-before-save)
 
