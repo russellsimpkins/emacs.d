@@ -1,15 +1,8 @@
-(require 'use-package)
-; RSS moved over to 'use-package
-; (use-package 'package)
+;; add melp to the mix
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
-; RSS 12/26 removed because emacs said it's not necessary
-; (package-initialize)
-(setq gc-cons-threshold 100000000)
-(setq inhibit-startup-message t)
-
-(defalias 'yes-or-no-p 'y-or-n-p)
+;; all of our base packages
 (defconst demo-packages
   '(anzu
   company
@@ -19,18 +12,19 @@
   helm-gtags
   helm-projectile
   helm-swoop
-  ;; function-args
   clean-aindent-mode
   comment-dwim-2
   dtrt-indent
   ws-butler
   iedit
   yasnippet
+  use-package
   smartparens
   projectile
   volatile-highlights
   zygospore))
 
+;; handy function to make sure all that's needed is installed
 (defun install-packages ()
   "Install all required packages."
   (interactive)
@@ -39,6 +33,16 @@
   (dolist (package demo-packages)
   (unless (package-installed-p package)
     (package-install package))))
+
+(install-packages)
+
+(setq gc-cons-threshold 100000000)
+(setq inhibit-startup-message t)
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+
+
 
 ;; rss commenting this out so that we don't contact the package manager on startup
 ;; (install-packages)
